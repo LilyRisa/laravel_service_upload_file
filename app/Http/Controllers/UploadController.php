@@ -17,7 +17,7 @@ class UploadController extends Controller
     	//$mime = $file->extension();
     	if($check){
     		$file = $request->File('file');
-    		$token_file = 'VanMin-file--'.md5(Hash::make($file->getClientOriginalName()).Carbon::now()->timestamp).'&'.$file->extension().'&'.Carbon::now('Asia/Ho_Chi_Minh')->timestamp;
+    		$token_file = 'VanMin-file--'.md5(Hash::make($file->getClientOriginalName()).Carbon::now()->timestamp).'-'.$file->extension().'-'.Carbon::now('Asia/Ho_Chi_Minh')->timestamp;
     		$imageName = time() . '.' . $file->getClientOriginalExtension();
     		$path = $file->getRealPath();
     		$blob = file_get_contents($path);

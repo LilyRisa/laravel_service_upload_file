@@ -230,5 +230,5 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
 
     ],
-
+     'TOKEN' => env('API_AUDIO_TOKEN'),
 ];

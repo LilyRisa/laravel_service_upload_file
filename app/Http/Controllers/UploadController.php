@@ -52,46 +52,7 @@ class UploadController extends Controller
 	        $response->header('Accept-Ranges', 'bytes');
 	        $response->header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
 	        return $response;
-    		// Storage::disk('public')->put($sess."caching.mp3", $stream);
-    		// $path = Storage::url($sess."caching.mp3");
-    		// $headers = [
-	     //            'Accept-Ranges' => "bytes",
-	     //            'Accept-Encoding' => "gzip, deflate",
-	     //            'Pragma' => 'public',
-	     //            'Expires' => '0',
-	     //            'Cache-Control' => 'must-revalidate',
-	     //            'Content-Transfer-Encoding' => 'binary',
-	     //            'Content-Disposition' => ' inline; filename=VanMin-file-'.$getfile->token.'.'.$getfile->type,
-	     //            //'Content-Length' => filesize($stream),
-	     //            'Content-Type' => "audio/mpeg",
-	     //            'Connection' => "Keep-Alive",
-	     //            //'Content-Range' => 'bytes 0-'.$fileName-1 .'/'.$fileName,
-	     //            'X-Pad' => 'avoid browser bug',
-	     //             'Etag' => 'VanMin-file-'.'VanMin-file-'.$getfile->token.'.mp3',
-	     //        ];
-    		// return response()->file($path, $headers);
-	    	// return response()->streamDownload(function () use ($stream){
-	     //        $file = fopen('php://output', 'w');
-	     //        fwrite($file, $stream);
-	     //        fclose($file);
-	     //    },'VanMin-file-'.$getfile->token.'.'.$getfile->type,[
-	     //            'Accept-Ranges' => "bytes",
-	     //            'Accept-Encoding' => "gzip, deflate",
-	     //            'Pragma' => 'public',
-	     //            'Expires' => '0',
-	     //            'Cache-Control' => 'no-cache',
-	     //            //'Content-Transfer-Encoding' => 'binary',
-	     //            //'Content-Disposition' => ' inline; filename=VanMin-file-'.md5(Hash::make(Carbon::now()->timestamp)).'mp3',
-	     //            //'Content-Length' => filesize($stream),
-	     //            //'Content-Type' => "audio/mpeg",
-	     //            'Connection' => "Keep-Alive",
-	     //            //'Content-Range' => 'bytes 0-'.$fileName-1 .'/'.$fileName,
-	     //            'X-Pad' => 'avoid browser bug',
-	     //            // 'Etag' => 'VanMin-file-'.'VanMin-file-'.$getfile->token.'.mp3',
-	     //        ]);
-    	}
-    	
-    
+    	}  	
     }
 
     protected function checkMimeImg($data){

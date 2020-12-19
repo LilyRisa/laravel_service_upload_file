@@ -21,6 +21,8 @@ Route::middleware(['ValidationToken'])->group(function () {
 });
 
 Route::get('getfile/{token}','UploadController@getFile');
+Route::get('getfile/detect_audio/{token}','DetectController@getFile');
+Route::get('detect_audio/lyrics/{token}','DetectController@lyrics');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

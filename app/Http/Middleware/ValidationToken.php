@@ -21,7 +21,7 @@ class ValidationToken
 
         $header = $request->header('Authorization');
         $token = DB::table('etoken')->where('token', $header)->first();
-        //dd($token);
+        // dd($token);
         $check = false;
 
         if($token != null){
@@ -29,7 +29,7 @@ class ValidationToken
         }
         if($check){
             return $next($request)
-                ->header('Access-Control-Allow-Origin', 'http://127.0.0.1:3333')
+                ->header('Access-Control-Allow-Origin', '*')
                 ->header('Access-Control-Allow-Methods', '*')
                 ->header('Access-Control-Allow-Credentials', 'true')
                 ->header('Access-Control-Allow-Headers', 'X-CSRF-Token');

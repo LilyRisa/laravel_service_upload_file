@@ -20,14 +20,17 @@ class DetectController extends Controller
 		if($getDetect == null){
 			$check_img = $this->checkMimeImg($getfile->type);
 	    	if($check_img == null){
-	    		$stream = base64_decode($getfile->data);
+	    		$stream = file_get_contents(storage_path("app/".$getfile->path));
 	    		$tmp = tmpfile();
 				fwrite($tmp, $stream);
 				fseek($tmp, 0);
 				$meta = stream_get_meta_data($tmp);
 	    		$res = $this->fileApi(null, config('app.TOKEN'), $meta['uri'], 'apple_music,spotify', null);
 	    		$return = json_decode($res);
-	    		//dd($return);
+	    		// dd($return);
+				if($return->status == "error"){
+					return \response()->json(['error' => "server error 500"], 500);
+				}
 	    		$saveDetect = new DetectAudioUpload();
 	    		$saveDetect->token = $token;
 	    		$saveDetect->title = $return->result != null ? $return->result->title : null;

@@ -19,12 +19,18 @@ class UploadController extends Controller
     		$file = $request->File('file');
     		$token_file = 'VanMin-file--'.md5(Hash::make($file->getClientOriginalName()).Carbon::now()->timestamp).'-'.$file->extension().'-'.Carbon::now('Asia/Ho_Chi_Minh')->timestamp;
     		$imageName = time() . '.' . $file->getClientOriginalExtension();
-    		$path = $file->getRealPath();
-    		$blob = file_get_contents($path);
+    		// $path = $file->getRealPath();
+			$filenameWithExt = $request->file('file')->getClientOriginalName();
+			// $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+			$extension = $request->file('file')->getClientOriginalExtension();
+			$fileNameToStore= md5(Hash::make($file->getClientOriginalName()).Carbon::now()->timestamp).".".$file->extension();
+			$path = $file->storeAs('public/upload', $fileNameToStore);
+    		// $blob = file_get_contents($path);
     		$storage = new StorageFile();
     		$storage->token = $token_file;
     		$storage->type = $file->extension();
-    		$storage->data = base64_encode($blob);
+    		// $storage->data = base64_encode($blob);
+    		$storage->path = $path;
     		$storage->save();
 		    return response()->json(['result' => ['status' =>'success','token_file' => $token_file ]]);
 		 // good luck
@@ -39,12 +45,13 @@ class UploadController extends Controller
     	$getfile = StorageFile::where('token', $token)->firstOrFail();
     	$check_img = $this->checkMimeImg($getfile->type);
     	$sess = random_int(1, 10000);
+		$data = file_get_contents(storage_path("app/".$getfile->path));
     	if($check_img != null){
-    		$img = \Image::make($getfile->data);
+    		$img = \Image::make($data);
     		return response()->make($img->encode($img->mime()), 200, array('Content-Type' => $img->mime(),'Cache-Control'=>'max-age=86400, public'));
 
     	}else{
-    		$stream = base64_decode($getfile->data);
+    		$stream = $data;
     		$filesize = (int) strlen($stream);
     		$response = \Response::make($stream, 200);
 	        $response->header('Content-Type', 'audio/mpeg');

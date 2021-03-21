@@ -18,9 +18,10 @@ class SaveStorage extends Migration
             $table->string('token')->nullable();
             $table->string('type')->nullable();
             //$table->binary('data')->nullable();
+            $table->string('path')->nullable();
             $table->timestamps();
         });
-        DB::statement("ALTER TABLE storage_file ADD data LONGBLOB NOT NULL");// CHỈ DÀNH CHO MYSQL CÓ LONGBLOB
+        // DB::statement("ALTER TABLE storage_file ADD data LONGBLOB NOT NULL");// CHỈ DÀNH CHO MYSQL CÓ LONGBLOB
         //DB::statement("ALTER TABLE storage_file ADD data MEDIUMBLOB");
     }
 

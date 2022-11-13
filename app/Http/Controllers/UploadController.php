@@ -77,10 +77,20 @@ class UploadController extends Controller
 				header("Content-Transfer-Encoding: binary");
 				header("Pragma: no-cache");
 				header('Content-Type: audio/mpeg');
+				$contentLength = GetStreamFileRemote::getSize($getfile->path);
+				header('Content-Length: ' . $contentLength);
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,$getfile->path);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
+				curl_setopt($ch,CURLOPT_HEADERFUNCTION,function($ch,string $header){
+					$ret=strlen($header);
+					if(0===stripos($header,"Content-Encoding")){
+						return $ret;
+					}
+					header(substr($header,0,-2));
+					return $ret;
+				});
 				curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
 					echo $data;
 					return strlen($data);

@@ -68,7 +68,23 @@ class UploadController extends Controller
     	$check_img = $this->checkMimeImg($getfile->type);
     	$sess = random_int(1, 10000);
 		if(str_contains($getfile->path, 'https://') || str_contains($getfile->path, 'http://')){
-			$data = GetStreamFileRemote::get($getfile->path);
+			if($check_img != null){
+				$data = GetStreamFileRemote::get($getfile->path);
+			}else{
+				header('Content-Type: application/octet-stream');
+				header('Content-Disposition: attachment; filename="' . $token. '"');
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL,$getfile->path);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
+				curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
+					echo $data;
+					return strlen($data);
+				});
+				curl_exec($ch);
+				curl_close($ch);
+				return 0;
+			}
 		}else{
 			$data = file_get_contents(storage_path("app/".$getfile->path));
 		}

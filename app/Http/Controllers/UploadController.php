@@ -72,7 +72,7 @@ class UploadController extends Controller
 				$data = GetStreamFileRemote::get($getfile->path);
 			}else{
 				header('Content-Type: audio/mpeg');
-				header('Content-Disposition: attachment; filename="' . $token. '"');
+				// header('Content-Disposition: attachment; filename="' . $token. '"');
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,$getfile->path);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

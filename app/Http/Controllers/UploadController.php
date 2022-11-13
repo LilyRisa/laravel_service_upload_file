@@ -80,24 +80,27 @@ class UploadController extends Controller
 				header('Content-Type: audio/mpeg');
 				
 				// header('Content-Disposition: attachment; filename="' . $token. '"');
-				// $ch = curl_init();
-				// curl_setopt($ch, CURLOPT_URL,$getfile->path);
-				// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				// curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL,$getfile->path);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
 				// curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
 				// 	echo $data;
 				// 	return strlen($data);
 				// });
-				// $data=curl_exec($ch);
-				// if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
-				// 	$contentLength = (int)$matches[1];
-				//   }
-				// header('Content-Length: ' . $contentLength);
+				$data=curl_exec($ch);
+				$filesize = (int) strlen($data);
+				header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
+				if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
+					$contentLength = (int)$matches[1];
+				  }
+				header('Content-Length: ' . $contentLength);
+				header('Content-Range: ' . $contentLength);
 				header('Cache-Control: must-revalidate');
-				// curl_close($ch);
+				curl_close($ch);
 				ob_clean();
 				flush();
-				readfile($getfile->path);
+				echo $data;
 				return 0;
 			}
 		}else{

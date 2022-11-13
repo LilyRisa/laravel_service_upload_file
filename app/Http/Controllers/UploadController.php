@@ -74,15 +74,14 @@ class UploadController extends Controller
 				header('Access-Control-Allow-Origin: *');
 				header('Access-Control-Allow-Methods: GET');
 				header("Access-Control-Allow-Headers: X-Requested-With");
-				header('Content-Description: File Transfer');
 				header("Content-Transfer-Encoding: binary");
-				header('Pragma: public');
+				header("Pragma: no-cache");
 				header('Content-Type: audio/mpeg');
 				
 				// header('Content-Disposition: attachment; filename="' . $token. '"');
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,$getfile->path);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
 				// curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
 				// 	echo $data;
@@ -90,13 +89,12 @@ class UploadController extends Controller
 				// });
 				$data=curl_exec($ch);
 				$filesize = (int) strlen($data);
-				header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
 				if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
 					$contentLength = (int)$matches[1];
 				  }
 				header('Content-Length: ' . $contentLength);
-				header('Content-Range: ' . $contentLength);
 				header('Cache-Control: must-revalidate');
+				header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
 				curl_close($ch);
 				ob_clean();
 				flush();

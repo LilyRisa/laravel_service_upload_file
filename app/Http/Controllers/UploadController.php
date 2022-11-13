@@ -71,12 +71,22 @@ class UploadController extends Controller
 			if($check_img != null){
 				$data = GetStreamFileRemote::get($getfile->path);
 			}else{
-				// header('Access-Control-Allow-Origin: *');
-				// header('Access-Control-Allow-Methods: GET');
-				// header("Access-Control-Allow-Headers: X-Requested-With");
-				// header("Content-Transfer-Encoding: binary");
-				// header("Pragma: no-cache");
-				// header('Content-Type: audio/mpeg');
+				header('Access-Control-Allow-Origin: *');
+				header('Access-Control-Allow-Methods: GET');
+				header("Access-Control-Allow-Headers: X-Requested-With");
+				header("Content-Transfer-Encoding: binary");
+				header("Pragma: no-cache");
+				header('Content-Type: audio/mpeg');
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL,$getfile->path);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
+				curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
+					echo $data;
+					return strlen($data);
+				});
+				curl_exec($ch);
+				curl_close($ch);
 				
 				// // header('Content-Disposition: attachment; filename="' . $token. '"');
 				// $ch = curl_init();
@@ -99,9 +109,10 @@ class UploadController extends Controller
 				// header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
 				// curl_close($ch);
 				// echo $data;
-				$context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
-				$data = file_get_contents($getfile->path,false,$context);
+				// $context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
+				// $data = file_get_contents($getfile->path,false,$context);
 				// return 0;
+				return 0;
 			}
 		}else{
 			$data = file_get_contents(storage_path("app/".$getfile->path));

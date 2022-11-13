@@ -9,6 +9,9 @@ use Carbon\Carbon;
 use App\Models\StorageFile;
 use Illuminate\Support\Facades\Storage;
 use File;
+use Illuminate\Support\Facades\Http;
+use App\Services\Upload;
+use App\Services\GetStreamFileRemote;
 
 class UploadController extends Controller
 {
@@ -16,8 +19,27 @@ class UploadController extends Controller
     	$check = $request->hasFile('file');
     	//$mime = $file->extension();
     	if($check){
-    		$file = $request->File('file');
-    		$token_file = 'VanMin-file--'.md5(Hash::make($file->getClientOriginalName()).Carbon::now()->timestamp).'-'.$file->extension().'-'.Carbon::now('Asia/Ho_Chi_Minh')->timestamp;
+			$file = $request->File('file');
+			$size = $request->file('file')->getSize(); // in bytes
+			$ext = $file->extension();
+
+			$token_file = 'congminh-file--'.md5(Hash::make($file->getClientOriginalName()).Carbon::now()->timestamp).'-'.$file->extension().'-'.Carbon::now('Asia/Ho_Chi_Minh')->timestamp;
+			$data = null;
+
+			if($ext == 'mp3' || $ext == 'wav' || $ext == 'ogg' || $ext == 'wma' || $size >= 5242880){
+				$data = Upload::upload($request->file('file'),md5(Hash::make($file->getClientOriginalName()).Carbon::now()->timestamp).".".$file->extension());
+			}
+
+			if(!empty($data['data'])){
+				$storage = new StorageFile();
+				$storage->token = $token_file;
+				$storage->type = $file->extension();
+				// $storage->data = base64_encode($blob);
+				$storage->path = $data['data'];
+				$storage->save();
+				return response()->json(['result' => ['status' =>'success','token_file' => $token_file ]]);
+			}
+    		
     		$imageName = time() . '.' . $file->getClientOriginalExtension();
     		// $path = $file->getRealPath();
 			$filenameWithExt = $request->file('file')->getClientOriginalName();
@@ -45,7 +67,11 @@ class UploadController extends Controller
     	$getfile = StorageFile::where('token', $token)->firstOrFail();
     	$check_img = $this->checkMimeImg($getfile->type);
     	$sess = random_int(1, 10000);
-		$data = file_get_contents(storage_path("app/".$getfile->path));
+		if(str_contains($getfile->path, 'https://') || str_contains($getfile->path, 'http://')){
+			$data = GetStreamFileRemote::get($getfile->path);
+		}else{
+			$data = file_get_contents(storage_path("app/".$getfile->path));
+		}
     	if($check_img != null){
     		$img = \Image::make($data);
     		return response()->make($img->encode($img->mime()), 200, array('Content-Type' => $img->mime(),'Cache-Control'=>'max-age=86400, public'));

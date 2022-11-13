@@ -231,4 +231,5 @@ return [
 
     ],
      'TOKEN' => env('API_AUDIO_TOKEN'),
+     'TOKEN_UPLOAD' => env('API_FILE_TOKEN'),
 ];

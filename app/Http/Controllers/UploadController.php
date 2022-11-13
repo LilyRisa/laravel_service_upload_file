@@ -74,7 +74,10 @@ class UploadController extends Controller
 				header('Access-Control-Allow-Origin: *');
 				header('Access-Control-Allow-Methods: GET');
 				header("Access-Control-Allow-Headers: X-Requested-With");
+				header("Content-Transfer-Encoding: binary");
+				header("Pragma: no-cache");
 				header('Content-Type: audio/mpeg');
+				
 				// header('Content-Disposition: attachment; filename="' . $token. '"');
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,$getfile->path);
@@ -85,7 +88,14 @@ class UploadController extends Controller
 				// 	return strlen($data);
 				// });
 				$data=curl_exec($ch);
+				if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
+					$contentLength = (int)$matches[1];
+				  }
+				header('Content-Length: ' . $contentLength);
+				header('Cache-Control: must-revalidate');
 				curl_close($ch);
+				ob_clean();
+				flush();
 				echo $data;
 				return 0;
 			}

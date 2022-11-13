@@ -71,13 +71,17 @@ class UploadController extends Controller
 			if($check_img != null){
 				$data = GetStreamFileRemote::get($getfile->path);
 			}else{
-				header('Content-Type: application/octet-stream');
+				header('Content-Type: audio/mpeg');
 				header('Content-Disposition: attachment; filename="' . $token. '"');
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,$getfile->path);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
 				curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
+					$filesize = (int) strlen($data);
+					header('Content-Length', $filesize);
+	        		header('Accept-Ranges', 'bytes');
+	        		header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
 					echo $data;
 					return strlen($data);
 				});

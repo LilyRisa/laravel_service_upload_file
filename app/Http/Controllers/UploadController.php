@@ -71,35 +71,37 @@ class UploadController extends Controller
 			if($check_img != null){
 				$data = GetStreamFileRemote::get($getfile->path);
 			}else{
-				header('Access-Control-Allow-Origin: *');
-				header('Access-Control-Allow-Methods: GET');
-				header("Access-Control-Allow-Headers: X-Requested-With");
-				header("Content-Transfer-Encoding: binary");
-				header("Pragma: no-cache");
-				header('Content-Type: audio/mpeg');
+				// header('Access-Control-Allow-Origin: *');
+				// header('Access-Control-Allow-Methods: GET');
+				// header("Access-Control-Allow-Headers: X-Requested-With");
+				// header("Content-Transfer-Encoding: binary");
+				// header("Pragma: no-cache");
+				// header('Content-Type: audio/mpeg');
 				
-				// header('Content-Disposition: attachment; filename="' . $token. '"');
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL,$getfile->path);
+				// // header('Content-Disposition: attachment; filename="' . $token. '"');
+				// $ch = curl_init();
+				// curl_setopt($ch, CURLOPT_URL,$getfile->path);
 
-				curl_setopt($ch, CURLOPT_HEADER, 1);
-				// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
-				// curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
-				// 	echo $data;
-				// 	return strlen($data);
-				// });
-				$data=curl_exec($ch);
-				$filesize = (int) strlen($data);
-				if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
-					$contentLength = (int)$matches[1];
-				  }
-				header('Content-Length: ' . $contentLength);
-				header('Cache-Control: must-revalidate');
-				header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
-				curl_close($ch);
-				echo $data;
-				return 0;
+				// curl_setopt($ch, CURLOPT_HEADER, 1);
+				// // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				// curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
+				// // curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
+				// // 	echo $data;
+				// // 	return strlen($data);
+				// // });
+				// $data=curl_exec($ch);
+				// $filesize = (int) strlen($data);
+				// if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
+				// 	$contentLength = (int)$matches[1];
+				//   }
+				// header('Content-Length: ' . $contentLength);
+				// header('Cache-Control: must-revalidate');
+				// header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
+				// curl_close($ch);
+				// echo $data;
+				$context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
+				$data = file_get_contents($getfile->path,false,$context);
+				// return 0;
 			}
 		}else{
 			$data = file_get_contents(storage_path("app/".$getfile->path));

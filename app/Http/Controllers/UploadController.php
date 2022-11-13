@@ -75,18 +75,15 @@ class UploadController extends Controller
 				// header('Content-Disposition: attachment; filename="' . $token. '"');
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,$getfile->path);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
-				curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
-					$filesize = (int) strlen($data);
-					header('Content-Length', $filesize);
-	        		header('Accept-Ranges', 'bytes');
-	        		header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
-					echo $data;
-					return strlen($data);
-				});
-				curl_exec($ch);
+				// curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
+				// 	echo $data;
+				// 	return strlen($data);
+				// });
+				$data=curl_exec($ch);
 				curl_close($ch);
+				echo $data;
 				return 0;
 			}
 		}else{

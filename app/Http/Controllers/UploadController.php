@@ -71,6 +71,9 @@ class UploadController extends Controller
 			if($check_img != null){
 				$data = GetStreamFileRemote::get($getfile->path);
 			}else{
+				header('Access-Control-Allow-Origin: *');
+				header('Access-Control-Allow-Methods: GET');
+				header("Access-Control-Allow-Headers: X-Requested-With");
 				header('Content-Type: audio/mpeg');
 				// header('Content-Disposition: attachment; filename="' . $token. '"');
 				$ch = curl_init();

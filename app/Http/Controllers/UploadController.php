@@ -81,6 +81,8 @@ class UploadController extends Controller
 				// header('Content-Disposition: attachment; filename="' . $token. '"');
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,$getfile->path);
+
+				curl_setopt($ch, CURLOPT_HEADER, 1);
 				// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 500);
 				// curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) {
@@ -96,8 +98,6 @@ class UploadController extends Controller
 				header('Cache-Control: must-revalidate');
 				header('Content-Range', 'bytes 0-'.$filesize.'/'.$filesize);
 				curl_close($ch);
-				ob_clean();
-				flush();
 				echo $data;
 				return 0;
 			}

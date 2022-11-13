@@ -68,7 +68,7 @@ class UploadController extends Controller
     	$check_img = $this->checkMimeImg($getfile->type);
     	$sess = random_int(1, 10000);
 		if(str_contains($getfile->path, 'https://') || str_contains($getfile->path, 'http://')){
-			$data = GetStreamFileRemote::get($getfile->path);
+			
 		}else{
 			$data = file_get_contents(storage_path("app/".$getfile->path));
 		}

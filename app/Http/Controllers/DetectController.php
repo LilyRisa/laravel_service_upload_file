@@ -31,9 +31,11 @@ class DetectController extends Controller
 					$meta = stream_get_meta_data($tmp);
 					$res = $this->fileApi(null, config('app.TOKEN'), $meta['uri'], 'apple_music,spotify', null);
 				}
-				
+
 	    		$return = json_decode($res);
-	    		// dd($return);
+				if(empty($return)){
+					return \response()->json(['error' => "server error 500"], 500);
+				}
 				if($return->status == "error"){
 					return \response()->json(['error' => "server error 500"], 500);
 				}
@@ -66,7 +68,7 @@ class DetectController extends Controller
 		}
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_URL, 'https://api.audd.io/'.$url);
+		curl_setopt($ch, CURLOPT_URL, 'https://api.audd.io/');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 		$result = curl_exec($ch);

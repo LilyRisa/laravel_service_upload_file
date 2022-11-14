@@ -20,12 +20,18 @@ class DetectController extends Controller
 		if($getDetect == null){
 			$check_img = $this->checkMimeImg($getfile->type);
 	    	if($check_img == null){
-	    		$stream = file_get_contents(storage_path("app/".$getfile->path));
-	    		$tmp = tmpfile();
-				fwrite($tmp, $stream);
-				fseek($tmp, 0);
-				$meta = stream_get_meta_data($tmp);
-	    		$res = $this->fileApi(null, config('app.TOKEN'), $meta['uri'], 'apple_music,spotify', null);
+
+				if(str_contains($getfile->path, 'https://') || str_contains($getfile->path, 'http://')){
+					$res = $this->fileApiViaUrl($getfile->path, config('app.TOKEN'));
+				}else{
+					$stream = file_get_contents(storage_path("app/".$getfile->path));
+					$tmp = tmpfile();
+					fwrite($tmp, $stream);
+					fseek($tmp, 0);
+					$meta = stream_get_meta_data($tmp);
+					$res = $this->fileApi(null, config('app.TOKEN'), $meta['uri'], 'apple_music,spotify', null);
+				}
+				
 	    		$return = json_decode($res);
 	    		// dd($return);
 				if($return->status == "error"){
@@ -49,6 +55,24 @@ class DetectController extends Controller
     	
 	}
 
+	protected function fileApiViaUrl($url = null, $token, $return='apple_music,spotify', $param = null){
+		$data = [
+		    'api_token' => $token,
+		    'url' => $url,
+		    'return' => $return,
+		];
+		if($param != null){
+			$data = array_merge($data,$param);
+		}
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_URL, 'https://api.audd.io/'.$url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+		$result = curl_exec($ch);
+		curl_close($ch);
+		return $result;
+	}
 
 
 	protected function fileApi($url = null, $token, $tmp, $return, $param = null){
